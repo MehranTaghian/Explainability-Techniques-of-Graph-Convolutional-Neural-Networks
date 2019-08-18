@@ -8,11 +8,12 @@ import torch.nn as nn
 from torch.utils.data.dataloader import DataLoader
 
 DATA_DIR = r"C:\Users\Mehran\Desktop\Azizpour\Datasets\Gnome"
-image_data_dir = DATA_DIR + '\\by-id\\'
-image_dir = DATA_DIR + "\\images\\"
+# DATA_DIR = "/home/mehran/dataset"
 classes = ['country', 'urban']
 
 TARGET_FEATURES_DIR = r"C:\Users\Mehran\Desktop\Azizpour\Datasets\Gnome\Features"
+# TARGET_FEATURES_DIR = "/home/mehran/dataset/Features"
+
 
 fig = plt.gcf()
 fig.set_size_inches(100, 100)
@@ -37,7 +38,7 @@ def get_model():
     return model
 
 
-def get_inception_features(image_id, category):
+def get_inception_features(image_id, category, inception_model):
     transform = transforms.Compose([
         transforms.Resize(299),
         transforms.CenterCrop(299),
@@ -45,29 +46,41 @@ def get_inception_features(image_id, category):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
     image_data = ImageRegionData(DATA_DIR + f"\\Regions\\{category}\\{image_id}\\", transform)
+    # image_data = ImageRegionData(DATA_DIR + f"/Regions/{category}/{image_id}/", transform)
     batch_size = len(image_data)
-    # print(image_data[0])
     loader = DataLoader(image_data, batch_size=batch_size)
-    model = get_model()
-    model.eval()
     train = next(iter(loader))[0]
     train = train.to(DEVICE)
-    return model.forward(train)
+    return inception_model.forward(train)
 
 
-def save_inception_features(class_items):
+def save_inception_features(class_items, model):
     i = 0
     target_experiment = 'countryVSurban' if ('country' in class_items) else 'indoorVSoutdoor'
     for c in class_items:
         list_folders = os.listdir(DATA_DIR + f'\\Regions\\{c}')
+        # list_folders = os.listdir(DATA_DIR + f'/Regions/{c}')
         for f in list_folders:
-            torch.save(get_inception_features(f, c),
+            print(f'Saving for id {f} in category {c}')
+            torch.save(get_inception_features(f, c, model),
                        TARGET_FEATURES_DIR + f'\\{target_experiment}\\node-features-{f}-{i}.pt')
+            # torch.save(get_inception_features(f, c),
+            #            TARGET_FEATURES_DIR + f'/{target_experiment}/node-features-{f}-{i}.pt')
 
         i += 1  # now second class
 
 
-experiment1 = ['country', 'urban']
-experiment2 = ['indoor', 'outdoor']
+model = get_model()
+model.eval()
 
-save_inception_features(experiment1)
+
+# os.mkdir(TARGET_FEATURES_DIR + f'\\country-test\\')
+#
+# torch.save(get_inception_features(107926, 'country', model),
+#                        TARGET_FEATURES_DIR + f'\\country-test\\node-features-{107926}-{0}.pt')
+
+# experiment1 = ['country', 'urban']
+# experiment2 = ['indoor', 'outdoor']
+
+# save_inception_features(experiment1, model)
+# save_inception_features(experiment2, model)
