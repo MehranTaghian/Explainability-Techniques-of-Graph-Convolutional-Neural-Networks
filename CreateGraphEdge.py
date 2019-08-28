@@ -7,7 +7,7 @@ import pandas as pd
 DATA_DIR = r"C:\Users\Mehran\Desktop\Azizpour\Datasets\Gnome"
 TARGET_DIR = DATA_DIR + '\\Edges\\'
 
-classes = ['country', 'urban', 'indoor', 'outdoor']
+classes = ['country', 'urban']  # , 'indoor', 'outdoor']
 
 
 def preprocess_object_names(graph):
@@ -67,7 +67,7 @@ def create_edge_files():
                     edge_writer.writerow(items)
 
 
-create_edge_files()
+# create_edge_files()
 
 
 def get_edge_list(image_id):

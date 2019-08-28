@@ -1,5 +1,5 @@
 import visual_genome.local as vg
-from pil import Image as PIL_Image
+from PIL import Image as PIL_Image
 import os
 import re
 
@@ -9,7 +9,7 @@ REGION_DIR = "C:\\Users\\Mehran\\Desktop\\Azizpour\\Datasets\\Gnome\\Regions"
 
 image_data_dir = DATA_DIR + '\\by-id\\'
 image_dir = DATA_DIR + "\\images\\"
-Categories = ['country', 'urban', 'indoor', 'outdoor']
+Categories = ['country', 'urban'] #, 'indoor', 'outdoor']
 
 
 def crop_regions(image_id, objects, category):

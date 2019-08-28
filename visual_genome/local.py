@@ -179,11 +179,19 @@ def parse_graph_local(data, image, verbose=False):
         for attr in data['attributes']:
             a = attr['attribute']
             if a['object_id'] in object_map:
-                attributes.append(Attribute(attr['attribute_id'],
-                                            Object(a['object_id'], a['x'],
-                                                   a['y'], a['w'], a['h'],
-                                                   a['names'], a['synsets']),
-                                            a['attributes'], a['synsets']))
+                if 'attributes' in a:
+                    attributes.append(Attribute(attr['attribute_id'],
+                                                Object(a['object_id'], a['x'],
+                                                       a['y'], a['w'], a['h'],
+                                                       a['names'], a['synsets']),
+                                                a['attributes'], a['synsets']))
+                else:
+                    attributes.append(Attribute(attr['attribute_id'],
+                                                Object(a['object_id'], a['x'],
+                                                       a['y'], a['w'], a['h'],
+                                                       a['names'], a['synsets']),
+                                                None, a['synsets']))
+
             else:
                 count_skips[1] += 1
     if verbose:
@@ -269,7 +277,7 @@ def add_attrs_to_scene_graphs(data_dir='data/'):
         sg_dict[iid]['attributes'] = attrs
 
     with open(os.path.join(data_dir, 'scene_graphs.json'), 'w') as f:
-        json.dump(sg_dict.values(), f)
+        json.dump(list(sg_dict.values()), f)
     del attr_data, sg_dict
     gc.collect()
 

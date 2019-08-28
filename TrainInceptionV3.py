@@ -70,8 +70,10 @@ def save_inception_features(class_items, model):
         i += 1  # now second class
 
 
+
 model = get_model()
 model.eval()
+save_inception_features(classes, model)
 
 
 # os.mkdir(TARGET_FEATURES_DIR + f'\\country-test\\')

@@ -3,11 +3,10 @@ import dgl
 import os
 from CreateGraphEdge import get_edge_list
 import torch
+from Federico.torchgraphs.src import torchgraphs as tg
 
 DATA_DIR = r"C:\Users\Mehran\Desktop\Azizpour\Datasets\Gnome"
 NODES_DIR = DATA_DIR + '\\Features'
-EDGES_DIR = DATA_DIR + '\\Edges'
-REGIONS_DIR = DATA_DIR + '\\Regions'
 
 
 class GraphDataset(Dataset):
@@ -24,10 +23,16 @@ class GraphDataset(Dataset):
             image_id = file.split('-')[2]
             label = int((file.split('-')[3]).split('.')[0])
             edge = get_edge_list(image_id)
-            g = dgl.DGLGraph()
-            g.add_nodes(features.shape[0])
-            g.add_edges(u=edge[:, 0], v=edge[:, 1])
-            g.ndata['h'] = features
+            # g = dgl.DGLGraph()
+            # g.add_nodes(features.shape[0])
+            # g.add_edges(u=edge[:, 0], v=edge[:, 1])
+            # g.ndata['h'] = features
+            g = tg.Graph(
+                node_features=features,
+                senders=torch.tensor(edge[:, 0]),
+                receivers=torch.tensor(edge[:, 1])
+            )
+
             self.ids.append(image_id)
             self.sample.append((g, label))
 
