@@ -1,5 +1,5 @@
 import torch
-import Federico.src.torchgraphs as tg
+import TorchGraph.src.torchgraphs as tg
 
 from . import autograd_tricks as guidedbp
 

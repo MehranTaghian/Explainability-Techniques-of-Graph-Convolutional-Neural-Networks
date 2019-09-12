@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from Graph.VisualGenomeGraphModel import VisualGenomeGN
 import torch.nn as nn
-from Federico.torchgraphs.src import torchgraphs as tg
+from TorchGraph.torchgraphs.src import torchgraphs as tg
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

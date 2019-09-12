@@ -3,7 +3,7 @@ import dgl.function as fn
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-from Federico.torchgraphs.src import torchgraphs as tg
+from TorchGraph.torchgraphs.src import torchgraphs as tg
 
 
 class VisualGenomeGN(nn.Module):

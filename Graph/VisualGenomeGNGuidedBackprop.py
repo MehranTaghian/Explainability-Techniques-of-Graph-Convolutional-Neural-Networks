@@ -1,4 +1,4 @@
-from Federico.src import guidedbackprop as gp
+from TorchGraph.src import guidedbackprop as gp
 from .VisualGenomeGraphModel import VisualGenomeGN
 import torch.nn as nn
 from collections import OrderedDict

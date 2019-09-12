@@ -3,7 +3,7 @@ import dgl
 import os
 from CreateGraphEdge import get_edge_list
 import torch
-from Federico.torchgraphs.src import torchgraphs as tg
+from TorchGraph.torchgraphs.src import torchgraphs as tg
 
 
 class GraphDataset(Dataset):

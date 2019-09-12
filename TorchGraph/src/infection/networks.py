@@ -4,7 +4,7 @@ from collections import OrderedDict
 import torch
 from torch import nn
 
-import Federico.src.torchgraphs as tg
+import TorchGraph.src.torchgraphs as tg
 
 
 class InfectionGN(nn.Module):

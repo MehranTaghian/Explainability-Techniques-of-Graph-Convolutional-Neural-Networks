@@ -2,7 +2,7 @@ from collections import OrderedDict
 from .VisualGenomeGraphModel import VisualGenomeGN
 
 import torch.nn as nn
-import Federico.src.relevance as relevance
+import TorchGraph.src.relevance as relevance
 
 
 class VisualGenomeGNRelevance(VisualGenomeGN):

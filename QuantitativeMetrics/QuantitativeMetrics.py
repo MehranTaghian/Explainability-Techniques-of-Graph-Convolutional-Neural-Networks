@@ -1,6 +1,6 @@
 from GraphDataset import GraphDataset
 from Graph.VisualGenomeGNRelevance import VisualGenomeGNRelevance
-from Federico.torchgraphs.src import torchgraphs as tg
+from TorchGraph.torchgraphs.src import torchgraphs as tg
 import torch
 import numpy as np
 
