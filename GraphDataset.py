@@ -5,21 +5,26 @@ from CreateGraphEdge import get_edge_list
 import torch
 from Federico.torchgraphs.src import torchgraphs as tg
 
-DATA_DIR = r"C:\Users\Mehran\Desktop\Azizpour\Datasets\Gnome"
-NODES_DIR = DATA_DIR + '\\Features'
-
 
 class GraphDataset(Dataset):
     """
-    experiment: can be 'countryVSurban' or 'indoorVSoutdoor'
-    """
+        experiment: can be 'countryVSurban' or 'indoorVSoutdoor'
+        """
 
-    def __init__(self, experiment):
+    DATA_DIR = r"C:\Users\Mehran\Desktop\Azizpour\Datasets\Gnome"
+    NODES_DIR = DATA_DIR + '\\Features'
+
+    def __init__(self, experiment, nodes_dir=None):
         self.sample = []
-        graph_list = os.listdir(NODES_DIR + F'\\{experiment}')
+        if nodes_dir is not None:
+            self.NODES_DIR = nodes_dir
+        else:
+            self.NODES_DIR += f'\\{experiment}'
+
+        graph_list = os.listdir(self.NODES_DIR)
         self.ids = []
         for file in graph_list:
-            features = torch.load(NODES_DIR + F'\\{experiment}\\{file}')
+            features = torch.load(self.NODES_DIR + F'\\{file}')
             image_id = file.split('-')[2]
             label = int((file.split('-')[3]).split('.')[0])
             edge = get_edge_list(image_id)

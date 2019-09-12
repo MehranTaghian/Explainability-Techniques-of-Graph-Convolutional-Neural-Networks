@@ -1,6 +1,5 @@
 from matplotlib.patches import Circle
 import matplotlib.cbook as cbook
-from Graph.GraphModel import Classifier
 from CreateGraphEdge import get_edge_list
 from matplotlib.patches import Rectangle
 from PIL import Image as PIL_Image
@@ -176,14 +175,11 @@ def draw_sample_v3(sample_id, image_id, label, relevance_sorted_indices, relevan
 
     edges = []
     for r in graph.relationships:
-        print(r)
         for o1 in top5_objects:
             if r.subject.__str__() == o1.__str__():
                 for o2 in top5_objects:
                     if r.object.__str__() == o2.__str__():
                         edges += [r]
-
-    print(len(edges))
 
     image_file = cbook.get_sample_data(DATA_DIR + f'\\images\\{image_id}.jpg')
     img = plt.imread(image_file)
@@ -202,8 +198,7 @@ def draw_sample_v3(sample_id, image_id, label, relevance_sorted_indices, relevan
     r = 0
     i = -1
     for o in top5_objects:
-        print(f'{o}:{(o.x + o.width / 2, o.y + o.height / 2)}')
-        color = 'green' if relevance_values[i] > 0 else 'red'
+        color = 'green' if relevance_values[i] >= 0 else 'red'
         circ = Circle((o.x + o.width / 2, o.y + o.height / 2), radius_list[r], color=color)
         i -= 1
         r += 1
@@ -221,7 +216,7 @@ def draw_sample_v3(sample_id, image_id, label, relevance_sorted_indices, relevan
         plt.text(abs(x[0] + x[1]) / 2, abs(y[0] + y[1]) / 2, e.predicate.__str__(),
                  bbox=dict(facecolor='white', alpha=0.7))
     # Show the image
-    plt.savefig(f'{sample_id}-{categ}.png')
+    plt.savefig(f'Result\\{sample_id}-{categ}-{image_id}.png')
 
 
 def draw_sample_v2(sample_graph, image_id, label, relevance_sorted_indices, sample_id, relevance_values,
@@ -378,7 +373,7 @@ def draw_sample(image_id, label, relevance_sorted_indices, sample_id, relevance_
     plt.close()
 
 
-def random_picker(sample_id, experiment='countryVSurban'):
+def random_picker(model, sample_id, experiment='countryVSurban'):
     list_samples = os.listdir(os.path.join(NODES_DIR, experiment))
     sample_name = list_samples[np.random.randint(len(list_samples))]
     image_id = int(sample_name.split('-')[2])
@@ -398,17 +393,17 @@ def random_picker(sample_id, experiment='countryVSurban'):
     draw_sample(sample[0], image_id, label, sorted_relevance, sample_id, experiment)
 
 
-image_id = 107926
-label = 0
-model = Classifier()
-model.load_state_dict(torch.load('Graph Model Trained\\trained_graph'))
-model.to('cuda:0')
-sample = get_sample(image_id, label, 'countryVSurban')
-temp = sample[0].ndata['h']
-model(sample[0])
-# lrp(model, temp)
-values, sorted_relevance = torch.sort(lrp(model, temp, image_id))
-print(values)
+# image_id = 107926
+# label = 0
+# model = Classifier()
+# model.load_state_dict(torch.load('Graph Model Trained\\trained_graph'))
+# model.to('cuda:0')
+# sample = get_sample(image_id, label, 'countryVSurban')
+# temp = sample[0].ndata['h']
+# model(sample[0])
+# # lrp(model, temp)
+# values, sorted_relevance = torch.sort(lrp(model, temp, image_id))
+# print(values)
 # draw_sample_v2(sample[0], image_id, label, sorted_relevance, 1, values)
 # draw_sample_v3(1, image_id, label, sorted_relevance, values,
 #                experiment='countryVSurban')

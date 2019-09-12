@@ -27,21 +27,19 @@ class EdgeLinear(nn.Module):
 
     def forward(self, graphs: GraphBatch) -> GraphBatch:
         new_edges = 0
-
         if self.W_edge is not None:
             new_edges += graphs.edge_features @ self.W_edge.t()
         if self.W_sender is not None:
             new_edges += torch.index_select(
-                graphs.node_features @ self.W_sender.t(), dim=0, index=graphs.senders)
+                graphs.node_features @ self.W_sender.t(), dim=0, index=graphs.senders.to('cuda:0'))
         if self.W_receiver is not None:
             new_edges += torch.index_select(
-                graphs.node_features @ self.W_receiver.t(), dim=0, index=graphs.receivers)
+                graphs.node_features @ self.W_receiver.t(), dim=0, index=graphs.receivers.to('cuda:0'))
         if self.W_global is not None:
             new_edges += torch.repeat_interleave(
                 graphs.global_features @ self.W_global.t(), dim=0, repeats=graphs.num_edges_by_graph)
         if self.bias is not None:
             new_edges = new_edges + self.bias.expand(graphs.num_edges, -1)
-
         return graphs.evolve(edge_features=new_edges)
 
 
@@ -78,10 +76,10 @@ class NodeLinear(nn.Module):
             new_nodes += graphs.node_features @ self.W_node.t()
         if self.W_incoming is not None:
             new_nodes += self.aggregation(
-                graphs.edge_features, dim=0, index=graphs.receivers, dim_size=graphs.num_nodes) @ self.W_incoming.t()
+                graphs.edge_features, dim=0, index=graphs.receivers.to('cuda:0'), dim_size=graphs.num_nodes) @ self.W_incoming.t()
         if self.W_outgoing is not None:
             new_nodes += self.aggregation(
-                graphs.edge_features, dim=0, index=graphs.senders, dim_size=graphs.num_nodes) @ self.W_outgoing.t()
+                graphs.edge_features, dim=0, index=graphs.senders.to('cuda:0'), dim_size=graphs.num_nodes) @ self.W_outgoing.t()
         if self.W_global is not None:
             new_nodes += torch.repeat_interleave(
                 graphs.global_features @ self.W_global.t(), dim=0, repeats=graphs.num_nodes_by_graph)

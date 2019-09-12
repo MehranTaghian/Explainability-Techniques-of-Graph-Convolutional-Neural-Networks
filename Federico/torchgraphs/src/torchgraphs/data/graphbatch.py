@@ -231,8 +231,8 @@ class GraphBatch(_BaseGraph):
             receivers.append(g.receivers + node_offset)
             node_offset += g.num_nodes
 
-        from torch.utils.data._utils.collate import _use_shared_memory
-
+        # from torch.utils.data._utils.collate import _use_shared_memory
+        _use_shared_memory = False
         if len(node_features) > 0:
             out = None
             if _use_shared_memory:

@@ -1,6 +1,3 @@
-from collections import OrderedDict
-
-import dgl
 import torch
 from GraphDataset import GraphDataset
 import torch.optim as optim
@@ -13,27 +10,19 @@ from Federico.torchgraphs.src import torchgraphs as tg
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def load_data(train_percent=80, experiment='countryVSurban'):
-    samples = GraphDataset(experiment)
+def load_data(train_percent=80, experiment='countryVSurban', nodes_dir=None):
+    samples = GraphDataset(experiment, nodes_dir)
     return train_test_split(samples, train_size=train_percent, shuffle=True)
-
-
-def collate(samples):
-    # The input `samples` is a list of pairs
-    #  (graph, label).
-    graphs, label = map(list, zip(*samples))
-    batched_graph = dgl.batch(graphs)
-    # batched_graph = tg.GraphBatch(graphs, label)
-    return batched_graph, torch.tensor(label).to(DEVICE)
-
 
 def train_model(epoches=100, experiment='countryVSurban', model=None):
     # Create training and test sets.
     testset, trainset = load_data(experiment=experiment)
+                                  # nodes_dir=r'C:\Users\Mehran\Desktop\Azizpour\Datasets\Gnome\Features\Fidelity\country')
     # Use PyTorch's DataLoader and the collate function
     # defined before.
     # data_loader = DataLoader(trainset, batch_size=32, shuffle=True,
     #                          collate_fn=collate)
+
     data_loader = DataLoader(trainset, batch_size=32, shuffle=True,
                              collate_fn=tg.GraphBatch.collate)
 
@@ -113,7 +102,6 @@ def model_eval(model, test_set, train_set):
     print('Accuracy of argmax predictions on the test set: {:4f}%'.format(
         (correct / len(test_Y) * 100)))
 
-
     # train_Y = torch.tensor(train_Y).float().view(-1, 1)
     # train_Y = train_Y.to(DEVICE)
     #
@@ -129,18 +117,16 @@ def model_eval(model, test_set, train_set):
     # argmax_test_Y = torch.max(probs_test_Y, 1)[1].view(-1, 1)
 
 
-
-
 # Training Faze:
 model, testset, trainset = train_model(experiment='countryVSurban')
 
-torch.save(model.state_dict(), 'trained_graph')
+torch.save(model.state_dict(), 'trained_graph')#_fidelity_country')
 # -------------------------------------------------------------
 torch.cuda.empty_cache()
 
 # Evaluation Faze:
 model = VisualGenomeGN()
-model.load_state_dict(torch.load('trained_graph'))
+model.load_state_dict(torch.load('trained_graph'))#_fidelity_country'))
 model.to(DEVICE)
 model_eval(model, testset, trainset)
 # --------------------------------------------------------------

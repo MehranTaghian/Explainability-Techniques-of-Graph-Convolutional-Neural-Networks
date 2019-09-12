@@ -1,5 +1,5 @@
 import torch
-import torchgraphs as tg
+import Federico.src.torchgraphs as tg
 
 from . import autograd_tricks as guidedbp
 
@@ -89,7 +89,7 @@ class GlobalLinearGuidedBP(tg.GlobalLinear):
             index = tg.utils.segment_lengths_to_ids(graphs.num_nodes_by_graph)
             new_globals = guidedbp.add(
                 new_globals,
-                guidedbp.linear(self.aggregation(graphs.node_features, dim=0, index=index, dim_size=graphs.num_graphs),
+                guidedbp.linear(self.aggregation(graphs.node_features, dim=0, index=index.to('cuda:0'), dim_size=graphs.num_graphs),
                                 self.W_node)
             )
         if self.W_edges is not None:

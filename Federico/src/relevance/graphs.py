@@ -13,13 +13,13 @@ class EdgeLinearRelevance(tg.EdgeLinear):
             new_edges = lrp.add(
                 new_edges,
                 lrp.index_select(lrp.linear_eps(graphs.node_features, self.W_sender),
-                                 dim=0, index=graphs.senders)
+                                 dim=0, index=graphs.senders.to('cuda:0'))
             )
         if self.W_receiver is not None:
             new_edges = lrp.add(
                 new_edges,
                 lrp.index_select(lrp.linear_eps(graphs.node_features, self.W_receiver),
-                                 dim=0, index=graphs.receivers)
+                                 dim=0, index=graphs.receivers.to('cuda:0'))
             )
         if self.W_global is not None:
             new_edges = lrp.add(
@@ -52,14 +52,14 @@ class NodeLinearRelevance(tg.NodeLinear):
             new_nodes = lrp.add(
                 new_nodes,
                 lrp.linear_eps(
-                    self.aggregation(graphs.edge_features, dim=0, index=graphs.receivers, dim_size=graphs.num_nodes),
+                    self.aggregation(graphs.edge_features, dim=0, index=graphs.receivers.to('cuda:0'), dim_size=graphs.num_nodes),
                     self.W_incoming)
             )
         if self.W_outgoing is not None:
             new_nodes = lrp.add(
                 new_nodes,
                 lrp.linear_eps(
-                    self.aggregation(graphs.edge_features, dim=0, index=graphs.senders, dim_size=graphs.num_nodes),
+                    self.aggregation(graphs.edge_features, dim=0, index=graphs.senders.to('cuda:0'), dim_size=graphs.num_nodes),
                     self.W_outgoing)
             )
         if self.W_global is not None:
@@ -87,7 +87,7 @@ class GlobalLinearRelevance(tg.GlobalLinear):
             index = tg.utils.segment_lengths_to_ids(graphs.num_nodes_by_graph)
             new_globals = lrp.add(
                 new_globals,
-                lrp.linear_eps(self.aggregation(graphs.node_features, dim=0, index=index, dim_size=graphs.num_graphs),
+                lrp.linear_eps(self.aggregation(graphs.node_features, dim=0, index=index.to('cuda:0'), dim_size=graphs.num_graphs),
                                self.W_node)
             )
         if self.W_edges is not None:

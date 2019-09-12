@@ -11,11 +11,17 @@ class VisualGenomeGN(nn.Module):
         super(VisualGenomeGN, self).__init__()
         self.Z = []
         self.layers = nn.Sequential(OrderedDict({
-            'node1': tg.NodeLinear(128, node_features=in_dim, aggregation='avg'),
+            'edge1': tg.EdgeLinear(2048, sender_features=2048),
+            'edge1_relu': tg.EdgeReLU(),
+            'node1': tg.NodeLinear(128, node_features=in_dim, incoming_features=in_dim, aggregation='avg'),
             'node1_relu': tg.NodeReLU(),
-            'node2': tg.NodeLinear(256, node_features=128, aggregation='avg'),
+            'edge2': tg.EdgeLinear(128, sender_features=128),
+            'edge2_relu': tg.EdgeReLU(),
+            'node2': tg.NodeLinear(256, node_features=128, incoming_features=128, aggregation='avg'),
             'node2_relu': tg.NodeReLU(),
-            'node3': tg.NodeLinear(512, node_features=256, aggregation='avg'),
+            'edge3': tg.EdgeLinear(256, sender_features=256),
+            'edge3_relu': tg.EdgeReLU(),
+            'node3': tg.NodeLinear(512, node_features=256, incoming_features=256, aggregation='avg'),
             'node3_relu': tg.NodeReLU(),
             'nodes_to_global': tg.GlobalLinear(2, node_features=512, aggregation='avg')
         }))
@@ -23,5 +29,6 @@ class VisualGenomeGN(nn.Module):
         # self.Classifier = nn.Linear(512, n_classes)
 
     def forward(self, g):
+        # for l in self.layers:
         g = self.layers(g)
         return g
